@@ -1,4 +1,4 @@
-package com.angrygrizley.RSOI2.gamesservice;
+package com.angrygrizley.rsoilab2new.gamesservice;
 
 public class GameNotFoundException extends Exception {
     public GameNotFoundException(Long id){

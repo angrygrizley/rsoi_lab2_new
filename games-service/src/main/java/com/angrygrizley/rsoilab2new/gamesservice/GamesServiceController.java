@@ -31,13 +31,13 @@ public class GamesServiceController {
     }
 
     @GetMapping(value = "/games/id/{id}")
-    public Game getGameById(@PathVariable Long id) throws com.angrygrizley.RSOI2.gamesservice.GameNotFoundException {
+    public Game getGameById(@PathVariable Long id) throws GameNotFoundException {
         logger.info("[GET] /games/" + id);
         return gamesService.getGameById(id);
     }
 
     @PutMapping(value = "/games/edit")
-    public Game putGame(Game game) throws com.angrygrizley.RSOI2.gamesservice.GameNotFoundException {
+    public Game putGame(Game game) throws GameNotFoundException {
         logger.info("[PUT] /games/edit");
         return gamesService.putGame(game);
     }
@@ -52,6 +52,13 @@ public class GamesServiceController {
     public List<Game> searchByPlayerNum(@PathVariable int num) {
         logger.info("[GET] /games/playernum/" + num);
         return gamesService.searchByPlayerNum(num);
+    }
+
+    @DeleteMapping(value = "/game/delete/{id}")
+    public void deleteGame(@PathVariable Long id)
+    {
+        logger.info("[DELETE] /game/delete/" + id);
+        gamesService.deleteGame(id);
     }
 
 

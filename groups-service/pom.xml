@@ -8,8 +8,8 @@
     <version>0.1</version>
     <packaging>jar</packaging>
 
-    <name>games-service</name>
-    <description>Group microservice</description>
+    <name>groups-service</name>
+    <description>Groups microservice</description>
 
     <parent>
         <groupId>com.angrygrizley</groupId>
@@ -44,6 +44,16 @@
             <groupId>dom4j</groupId>
             <artifactId>dom4j</artifactId>
             <version>1.6.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+            <version>5.1.2.RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+            <version>5.1.2.RELEASE</version>
         </dependency>
 
     </dependencies>

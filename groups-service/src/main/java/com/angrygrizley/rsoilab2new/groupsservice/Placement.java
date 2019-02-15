@@ -51,5 +51,11 @@ public class Placement {
                 ", player_id=" + player_id +
                 '}';
     }
+
+    public Placement(Long group_id, Long player_id) {
+        this.group_id = group_id;
+        this.player_id = player_id;
+    }
+
 }
 

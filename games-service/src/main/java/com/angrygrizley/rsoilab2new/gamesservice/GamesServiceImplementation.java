@@ -1,7 +1,6 @@
 package com.angrygrizley.rsoilab2new.gamesservice;
 
 
-import com.angrygrizley.RSOI2.gamesservice.GameNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -56,4 +55,7 @@ public class GamesServiceImplementation implements GamesService {
         }
         return result;
     }
+
+    @Override
+    public void deleteGame(Long id) { gamesRepository.deleteById(id); }
 }
