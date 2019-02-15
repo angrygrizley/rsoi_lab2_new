@@ -33,6 +33,11 @@
             <artifactId>spring-web</artifactId>
             <version>5.1.2.RELEASE</version>
         </dependency>
+        <dependency>
+            <groupId>dom4j</groupId>
+            <artifactId>dom4j</artifactId>
+            <version>1.6.1</version>
+        </dependency>
     </dependencies>
     <packaging>pom</packaging>
 
@@ -49,6 +54,7 @@
     <modules>
         <module>users-service</module>
         <module>gateway-service</module>
+        <module>games-service</module>
     </modules>
 
 </project>
