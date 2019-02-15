@@ -37,4 +37,34 @@ public class GatewayServiceController {
         logger.info("[GET] /users/id/" + id);
         return gatewayService.getUserById(id);
     }
+
+    @PostMapping(path = "/games")
+    public void addGame(@RequestBody String game) throws IOException {
+        logger.info("[POST] /games" + game);
+        gatewayService.addGame(game);
+    }
+
+    @GetMapping(path = "/games")
+    public String getGames() throws IOException {
+        logger.info("[GET] /games");
+        return gatewayService.getGames();
+    }
+
+    @GetMapping("path = /games/id/{id}")
+    public String getGameById(@PathVariable Long id) throws IOException{
+        logger.info("[GET} /games/id/" + id);
+        return gatewayService.getGameById(id);
+    }
+
+    @GetMapping("path = /games/genre/{genre}")
+    public String getGamesByGenre(@PathVariable String genre) throws IOException {
+        logger.info("[GET] /games/genre/" + genre);
+        return gatewayService.getGamesByGenre(genre);
+    }
+
+    @GetMapping("path = /games/playernum/{num}")
+    public String getGamesByPlayerNum(@PathVariable int num) throws IOException {
+        logger.info("[GET] /games/playernum/" + num);
+        return gatewayService.getGamesByPlayerNum(num);
+    }
 }
