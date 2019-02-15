@@ -38,6 +38,16 @@
             <artifactId>dom4j</artifactId>
             <version>1.6.1</version>
         </dependency>
+        <dependency>
+            <groupId>dom4j</groupId>
+            <artifactId>dom4j</artifactId>
+            <version>1.6.1</version>
+        </dependency>
+        <dependency>
+            <groupId>dom4j</groupId>
+            <artifactId>dom4j</artifactId>
+            <version>1.6.1</version>
+        </dependency>
     </dependencies>
     <packaging>pom</packaging>
 
@@ -55,6 +65,7 @@
         <module>users-service</module>
         <module>gateway-service</module>
         <module>games-service</module>
+        <module>groups-service</module>
     </modules>
 
 </project>
