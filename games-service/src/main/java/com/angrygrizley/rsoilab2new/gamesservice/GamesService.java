@@ -7,7 +7,6 @@ public interface GamesService {
     List<Game> getGames();
     Game getGameById(Long id) throws GameNotFoundException;
     Game putGame(Game newGame) throws GameNotFoundException;
-    List<Game> searchByGenre(String genre);
-    List<Game> searchByPlayerNum(int num);
+    List<Game> searchGames(String genre, int num);
     void deleteGame(Long id);
 }

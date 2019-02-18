@@ -1,8 +1,5 @@
 package com.angrygrizley.rsoilab2new.gamesservice;
 
-import org.springframework.boot.autoconfigure.domain.EntityScan;
-import sun.jvm.hotspot.gc.shared.Generation;
-
 import javax.persistence.*;
 import java.util.Objects;
 
@@ -14,60 +11,60 @@ public class Game {
     private Long id;
 
     @Column(name = "title")
-    private String name;
+    private String title;
 
     @Column(name = "genre")
     private String genre;
 
-    @Column(name = "min_num")
-    private int min_num;
+    @Column(name = "minNum")
+    private int minNum;
 
-    @Column(name = "max_num")
-    private int max_num;
+    @Column(name = "maxNum")
+    private int maxNum;
 
-    @Column(name = "group_num")
-    private Long group_num;
+    @Column(name = "groupNum")
+    private Long groupNum;
 
     public Long getId() { return id; }
 
     public void setId(Long id) { this.id = id; }
 
-    public String getName() { return name; }
+    public String getTitle() { return title; }
 
-    public void setName(String name) { this.name = name; }
+    public void setTitle(String title) { this.title = title; }
 
     public String getGenre() { return genre; }
 
     public void setGenre(String genre) { this.genre = genre; }
 
-    public int getMin_num() { return min_num; }
+    public int getMinNum() { return minNum; }
 
-    public void setMin_num(int min_num) { this.min_num = min_num; }
+    public void setMinNum(int minNum) { this.minNum = minNum; }
 
-    public int getMax_num() { return max_num; }
+    public int getMaxNum() { return maxNum; }
 
-    public void setMax_num(int max_num) { this.max_num = max_num; }
+    public void setMaxNum(int maxNum) { this.maxNum = maxNum; }
 
-    public Long getGroup_num() { return group_num; }
+    public Long getGroupNum() { return groupNum; }
 
-    public void setGroup_num(Long group_num) { this.group_num = group_num; }
+    public void setGroupNum(Long groupNum) { this.groupNum = groupNum; }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Game game = (Game) o;
-        return min_num == game.min_num &&
-                max_num == game.max_num &&
+        return minNum == game.minNum &&
+                maxNum == game.maxNum &&
                 id.equals(game.id) &&
-                name.equals(game.name) &&
+                title.equals(game.title) &&
                 genre.equals(game.genre) &&
-                group_num.equals(game.group_num);
+                groupNum.equals(game.groupNum);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, genre, min_num, max_num, group_num);
+        return Objects.hash(id, title, genre, minNum, maxNum, groupNum);
     }
 
 

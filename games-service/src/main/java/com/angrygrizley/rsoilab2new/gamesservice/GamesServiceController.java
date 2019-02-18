@@ -20,8 +20,8 @@ public class GamesServiceController {
 
     @PostMapping(value = "/games")
     public void addGame(@RequestBody Game game) {
-        gamesService.addGame(game);
         logger.info("[POST] /games", game);
+        gamesService.addGame(game);
     }
 
     @GetMapping(value = "/games")
@@ -37,21 +37,16 @@ public class GamesServiceController {
     }
 
     @PutMapping(value = "/games/edit")
-    public Game putGame(Game game) throws GameNotFoundException {
+    public Game putGame(@RequestBody Game game) throws GameNotFoundException {
         logger.info("[PUT] /games/edit");
         return gamesService.putGame(game);
     }
 
-    @GetMapping(value = "/games/genre/{genre}")
-    public List<Game> searchByGenre(@PathVariable String genre){
-        logger.info("[GET] /games/genre/" + genre);
-        return gamesService.searchByGenre(genre);
-    }
-
-    @GetMapping(value = "/games/playernum/{num}")
-    public List<Game> searchByPlayerNum(@PathVariable int num) {
-        logger.info("[GET] /games/playernum/" + num);
-        return gamesService.searchByPlayerNum(num);
+    @GetMapping(value = "/games/search")
+    public List<Game> searchGames(@RequestParam (value = "genre", required = false, defaultValue = "") String genre,
+                                    @RequestParam (value = "playernum", required = false, defaultValue = "-1") int num){
+        logger.info("[GET] /games/search genre: " + genre + " playernum: " + num);
+        return gamesService.searchGames(genre, num);
     }
 
     @DeleteMapping(value = "/game/delete/{id}")

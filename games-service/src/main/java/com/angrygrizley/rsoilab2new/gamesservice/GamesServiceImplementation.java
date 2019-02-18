@@ -26,33 +26,26 @@ public class GamesServiceImplementation implements GamesService {
 
     @Override
     public Game putGame(Game newGame) throws GameNotFoundException {
-        return gamesRepository.findById(newGame.getId()).map(Game -> {
-            Game.setName(Game.getName());
-            Game.setGenre(Game.getGenre());
-            Game.setGroup_num(newGame.getGroup_num());
-            Game.setMin_num(newGame.getMin_num());
-            Game.setMax_num(newGame.getMax_num());
-            return gamesRepository.save(Game);
-        }).orElseThrow(() -> new GameNotFoundException(newGame.getId()));
+        Game old = gamesRepository.findById(newGame.getId()).orElseThrow(() -> new GameNotFoundException(newGame.getId()));
+        old.setTitle(newGame.getTitle());
+        old.setGenre(newGame.getGenre());
+        old.setGroupNum(newGame.getGroupNum());
+        old.setMinNum(newGame.getMinNum());
+        old.setMaxNum(newGame.getMaxNum());
+        return gamesRepository.save(old);
     }
 
-    @Override
-    public List<Game> searchByGenre(String genre) {
-        return gamesRepository.findAllByGenre(genre);
-    }
 
     @Override
-    public List<Game> searchByPlayerNum(int num) {
-        List<Game> all = gamesRepository.findAll();
-        List<Game> result = new ArrayList<>();
-        int n = all.size()-1;
-        for (int i = 0; i < n; i++)
-        {
-            if ((all.get(i).getMin_num() <= num) && (all.get(i).getMax_num() >= num))
-            {
-                result.add(all.get(i));
-            }
-        }
+    public List<Game> searchGames(String genre, int num) {
+
+        List<Game> result = new ArrayList<Game>();
+        if ((genre.isEmpty()) && (num != -1))
+            result = gamesRepository.findAllByPlNumBetweenMinNumAnAndMaxNum(num);
+        if ((num == -1) && (!genre.isEmpty()))
+            result = gamesRepository.findAllByGenre(genre);
+        if ((num != -1) && (!genre.isEmpty()))
+            result = gamesRepository.findAllByPlNumBetweenMinNumAnAndMaxNumAndGenre(genre, num);
         return result;
     }
 
