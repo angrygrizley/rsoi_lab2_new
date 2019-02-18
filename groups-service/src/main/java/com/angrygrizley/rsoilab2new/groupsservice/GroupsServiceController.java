@@ -38,7 +38,7 @@ public class GroupsServiceController {
     }
 
     @GetMapping(value="/groups/id/{id}")
-    public Group getGroupById(Long id) throws GroupNotFoundException{
+    public Group getGroupById(@PathVariable  Long id) throws GroupNotFoundException{
         logger.info("[GET] /groups/id/" + id);
         return groupsService.getGroupById(id);
     }
@@ -56,14 +56,24 @@ public class GroupsServiceController {
     }
 
     @PostMapping(value="/groups/players/add")
-    public void addPlayers(Long gameId, Long playerId){
-        logger.info("[POST] /groups/players/add " + playerId + " to " + gameId);
-        groupsService.addPlayer(gameId, playerId);
+    public void addPlayers(@RequestParam (value = "userId") Long playerId, @RequestParam (value = "groupId") Long groupId){
+        logger.info("[POST] /groups/players/add " + playerId + " to " + groupId);
+        try {
+            groupsService.addPlayer(groupId, playerId);
+        } catch (GroupNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     @DeleteMapping(value="/groups/players/remove")
-    public void removePlayers(Long gameId, Long playerId) {
-        logger.info("[DELETE] /groups/players/remove " + playerId + " from " + gameId);
-        groupsService.removePlayer(gameId, playerId);
+    public void removePlayers(@RequestParam (value = "groupId") Long groupId, @RequestParam (value = "userId") Long playerId) {
+        logger.info("[DELETE] /groups/players/remove " + playerId + " from " + groupId);
+        try {
+            groupsService.removePlayer(groupId, playerId);
+        } catch (GroupNotFoundException e) {
+            e.printStackTrace();
+        } catch (PlacementNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 }

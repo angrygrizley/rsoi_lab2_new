@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class GroupsServiceImplementation implements GroupsService {
@@ -21,7 +20,10 @@ public class GroupsServiceImplementation implements GroupsService {
     public void addGroup(Group group) { groupsRepository.save(group); }
 
     @Override
-    public void deleteGroup(Long id) { groupsRepository.deleteById(id); }
+    public void deleteGroup(Long id) {
+        groupsRepository.deleteById(id);
+        placementRepository.deleteAllByGroupId(id);
+    }
 
 
     @Override
@@ -35,32 +37,33 @@ public class GroupsServiceImplementation implements GroupsService {
 
     @Override
     public Group putGroup(Group newGroup) throws GroupNotFoundException {
-        return groupsRepository.findById(newGroup.getId()).map(Group -> {
-            Group.setFree_space(newGroup.getFree_space());
-            Group.setGroup_name(newGroup.getGroup_name());
-            Group.setGame_id(newGroup.getGame_id());
-            Group.setPlayers(newGroup.getPlayers());
-            return groupsRepository.save(Group);
-        }).orElseThrow(() -> new GroupNotFoundException(newGroup.getId()));
+        Group group =  groupsRepository.findById(newGroup.getId()).orElseThrow(() -> new GroupNotFoundException(newGroup.getId()));
+        group.setPlayers(newGroup.getPlayers());
+        group.setFreeSpace(newGroup.getFreeSpace());
+        group.setGameId(newGroup.getGameId());
+        group.setGroupName(newGroup.getGroupName());
+        return groupsRepository.save(group);
     }
 
     @Override
     public List<Group> getFreeGroups() {
-        return groupsRepository.findAllByFree_spaceIsNotNull();
+        return groupsRepository.findAllGroupsByFreeSpace();
     }
 
     @Override
     public List<Group> getGroupsForGame(Long gameId) {
-        return groupsRepository.findAllByGame_id(gameId);
+        return groupsRepository.findAllByGameId(gameId);
     }
 
     @Override
     public void addPlayer(Long groupId, Long playerId) throws GroupNotFoundException {
         Group g = groupsRepository.findById(groupId).orElseThrow(() -> new GroupNotFoundException(groupId));
-        int freeSpace = g.getFree_space();
+        int freeSpace = g.getFreeSpace();
         if (freeSpace != 0) {
-            placementRepository.save(new Placement(groupId, playerId));
-            g.setFree_space(freeSpace-1);
+            Placement placement = placementRepository.save(new Placement(groupId, playerId));
+            g.getPlayers().add(placement);
+            g.setFreeSpace(freeSpace-1);
+            groupsRepository.save(g);
         }
     }
 
@@ -68,11 +71,15 @@ public class GroupsServiceImplementation implements GroupsService {
     public void removePlayer(Long groupId, Long playerId) throws GroupNotFoundException, PlacementNotFoundException {
         Group g = groupsRepository.findById(groupId).orElseThrow(() -> new GroupNotFoundException(groupId));
 
-        Placement placement = placementRepository.findByGroup_idAndPlayer_id(groupId, playerId).orElseThrow(
+        Placement placement = placementRepository.findByGroupIdAndPlayerId(groupId, playerId).orElseThrow(
                 () -> new PlacementNotFoundException(groupId, playerId));
 
-        placementRepository.deleteByGroup_idAndPlayer_id(groupId, playerId);
-        int freeSpace = g.getFree_space();
-        g.setFree_space(freeSpace + 1);
+        int freeSpace = g.getFreeSpace();
+        g.setFreeSpace(freeSpace + 1);
+        g.getPlayers().remove(placement);
+
+        groupsRepository.save(g);
+        placementRepository.deleteById(placement.getId());
+
     }
 }

@@ -10,23 +10,26 @@ public class Placement {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name="group_id")
-    private Long group_id;
+    @Column(name="groupId")
+    private Long groupId;
 
-    @Column(name="player_id")
-    private Long player_id;
+    @Column(name="playerId")
+    private Long playerId;
 
     public Long getId() { return id; }
 
     public void setId(Long id) { this.id = id; }
 
-    public Long getGroup_id() { return group_id; }
+    public Long getGroupId() { return groupId; }
 
-    public void setGroup_id(Long group_id) { this.group_id = group_id; }
+    public void setGroupId(Long groupId) { this.groupId = groupId; }
 
-    public Long getPlayer_id() { return player_id; }
+    public Long getPlayerId() { return playerId; }
 
-    public void setPlayer_id(Long player_id) { this.player_id = player_id; }
+    public void setPlayerId(Long playerId) { this.playerId = playerId; }
+
+    public Placement() {};
+
 
     @Override
     public boolean equals(Object o) {
@@ -34,27 +37,27 @@ public class Placement {
         if (o == null || getClass() != o.getClass()) return false;
         Placement placement = (Placement) o;
         return id.equals(placement.id) &&
-                group_id.equals(placement.group_id) &&
-                player_id.equals(placement.player_id);
+                groupId.equals(placement.groupId) &&
+                playerId.equals(placement.playerId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, group_id, player_id);
+        return Objects.hash(id, groupId, playerId);
     }
 
     @Override
     public String toString() {
         return "Placement{" +
                 "id=" + id +
-                ", group_id=" + group_id +
-                ", player_id=" + player_id +
+                ", groupId=" + groupId +
+                ", playerId=" + playerId +
                 '}';
     }
 
-    public Placement(Long group_id, Long player_id) {
-        this.group_id = group_id;
-        this.player_id = player_id;
+    public Placement(Long groupId, Long playerId) {
+        this.groupId = groupId;
+        this.playerId = playerId;
     }
 
 }

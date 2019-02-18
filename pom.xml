@@ -51,7 +51,7 @@
     </dependencies>
     <packaging>pom</packaging>
 
-    <name>RSOI2</name>
+    <title>RSOI2</title>
     <description>RSOI2</description>
 
     <parent>

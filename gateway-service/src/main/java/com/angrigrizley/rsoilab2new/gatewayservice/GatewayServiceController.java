@@ -50,21 +50,73 @@ public class GatewayServiceController {
         return gatewayService.getGames();
     }
 
-    @GetMapping("path = /games/id/{id}")
+    @GetMapping(path = "/games/id/{id}")
     public String getGameById(@PathVariable Long id) throws IOException{
         logger.info("[GET} /games/id/" + id);
         return gatewayService.getGameById(id);
     }
 
-    @GetMapping("path = /games/genre/{genre}")
+    @GetMapping(path = "/games/genre/{genre}")
     public String getGamesByGenre(@PathVariable String genre) throws IOException {
         logger.info("[GET] /games/genre/" + genre);
         return gatewayService.getGamesByGenre(genre);
     }
 
-    @GetMapping("path = /games/playernum/{num}")
+    @GetMapping(path = "/games/playernum/{num}")
     public String getGamesByPlayerNum(@PathVariable int num) throws IOException {
         logger.info("[GET] /games/playernum/" + num);
         return gatewayService.getGamesByPlayerNum(num);
     }
+
+    @PostMapping(path = "/groups")
+    public void addGroup(@RequestBody String group) throws IOException {
+        logger.info("[POST] /groups"+group);
+        gatewayService.addGroup(group);
+    }
+
+    @DeleteMapping(path = "/groups/delete/{id}")
+    public void deleteGroup(Long id) throws IOException {
+        logger.info("[DELETE] /groups/delete/" + id);
+        gatewayService.deleteGroup(id);
+    }
+
+    @GetMapping(path = "/groups")
+    public String getGroups() throws IOException {
+        logger.info("[GET] /groups");
+        return gatewayService.getGroups();
+    }
+
+    @GetMapping(path="/groups/id/{id}")
+    public String getGroupdById(@PathVariable Long id) throws IOException {
+        logger.info("[GET] /groups/id" + id);
+        return gatewayService.getGroupById(id);
+    }
+
+    @GetMapping(path = "/groups/free")
+    public String getFreeGroups() throws IOException {
+        logger.info("[GET] /groups/free");
+        return gatewayService.getFreeGroups();
+    }
+
+    @GetMapping(path = "/groups/game/{id}")
+    public String getGroupsByGame(@PathVariable Long gameId) throws  IOException {
+        logger.info("[GET] /groups/game/" + gameId);
+        return gatewayService.getGroupsByGame(gameId);
+    }
+
+    @PostMapping(path = "/groups/players/add")
+    public void addPlayer(@RequestParam (value = "userid") Long userId, @RequestParam (value = "groupid") Long groupId)
+            throws  IOException {
+        logger.info("[POST] /groups/players/add" + userId + " to group " + groupId);
+        gatewayService.addPlayer(userId, groupId);
+    }
+
+    @DeleteMapping(path = "/groups/players/remove")
+    public void removePlayer(@RequestParam (value = "userid") Long userId, @RequestParam (value = "groupid") Long groupId)
+            throws  IOException {
+        logger.info("[POST] /groups/players/remove" + userId + " from group " + groupId);
+        gatewayService.removePlayer(userId, groupId);
+    }
+
+
 }
