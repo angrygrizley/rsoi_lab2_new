@@ -15,8 +15,8 @@ public class UsersServiceImplementation implements UsersService {
     }
 
     @Override
-    public void addUser(User user) {
-        usersRepository.save(user);
+    public User addUser(User user) {
+        return usersRepository.save(user);
     }
 
     @Override
