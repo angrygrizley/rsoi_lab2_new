@@ -22,9 +22,9 @@ public class GatewayServiceController {
     }
 
     @PostMapping(path="/users")
-    public void addUser(@RequestBody String user) throws IOException {
+    public String addUser(@RequestBody String user) throws IOException {
         logger.info("[POST] /users" + user);
-        gatewayService.addUser(user);
+        return gatewayService.addUser(user);
     }
 
     @GetMapping(path="/users", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -34,15 +34,15 @@ public class GatewayServiceController {
     }
 
     @GetMapping(path="/users/id/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public String getUserById(Long id) throws IOException {
+    public String getUserById(@PathVariable Long id) throws IOException {
         logger.info("[GET] /users/id/" + id);
         return gatewayService.getUserById(id);
     }
 
     @PostMapping(path = "/games")
-    public void addGame(@RequestBody String game) throws IOException {
+    public String addGame(@RequestBody String game) throws IOException {
         logger.info("[POST] /games" + game);
-        gatewayService.addGame(game);
+        return gatewayService.addGame(game);
     }
 
     @GetMapping(path = "/games")
@@ -58,7 +58,7 @@ public class GatewayServiceController {
     }
 
     @GetMapping(path = "/games/search")
-    public String getGamesByGenre(@RequestParam (value = "genre", required = false, defaultValue = "") String genre,
+    public String searchGames(@RequestParam (value = "genre", required = false, defaultValue = "") String genre,
                                   @RequestParam (value = "playernum", required = false, defaultValue = "-1") int num)
             throws IOException {
         logger.info("[GET] /games/search genre:" + genre + " playernum:" + num);
@@ -67,15 +67,15 @@ public class GatewayServiceController {
 
 
     @PostMapping(path = "/groups")
-    public void addGroup(@RequestBody String group) throws IOException, JSONException {
+    public String addGroup(@RequestBody String group) throws IOException, JSONException {
         logger.info("[POST] /groups"+group);
-        gatewayService.addGroup(group);
+        return gatewayService.addGroup(group);
     }
 
     @DeleteMapping(path = "/groups/delete/{id}")
-    public void deleteGroup(Long id) throws IOException, JSONException {
+    public boolean deleteGroup(@PathVariable Long id) throws IOException, JSONException {
         logger.info("[DELETE] /groups/delete/" + id);
-        gatewayService.deleteGroup(id);
+        return gatewayService.deleteGroup(id);
     }
 
     @GetMapping(path = "/groups")
@@ -96,24 +96,24 @@ public class GatewayServiceController {
         return gatewayService.getFreeGroups();
     }
 
-    @GetMapping(path = "/groups/game/{id}")
+    @GetMapping(path = "/groups/game/{gameId}")
     public String getGroupsByGame(@PathVariable Long gameId) throws  IOException {
         logger.info("[GET] /groups/game/" + gameId);
         return gatewayService.getGroupsByGame(gameId);
     }
 
     @PostMapping(path = "/groups/players/add")
-    public void addPlayer(@RequestParam (value = "userid") Long userId, @RequestParam (value = "groupid") Long groupId)
+    public String addPlayer(@RequestParam (value = "userid") Long userId, @RequestParam (value = "groupid") Long groupId)
             throws IOException, JSONException {
         logger.info("[POST] /groups/players/add" + userId + " to group " + groupId);
-        gatewayService.addPlayer(userId, groupId);
+        return gatewayService.addPlayer(userId, groupId);
     }
 
     @DeleteMapping(path = "/groups/players/remove")
-    public void removePlayer(@RequestParam (value = "userid") Long userId, @RequestParam (value = "groupid") Long groupId)
+    public boolean removePlayer(@RequestParam (value = "userid") Long userId, @RequestParam (value = "groupid") Long groupId)
             throws IOException, JSONException {
         logger.info("[POST] /groups/players/remove" + userId + " from group " + groupId);
-        gatewayService.removePlayer(userId, groupId);
+        return gatewayService.removePlayer(userId, groupId);
     }
 
 

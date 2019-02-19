@@ -14,7 +14,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 
-import javax.swing.text.html.parser.Entity;
 import java.io.IOException;
 
 @Service
@@ -24,13 +23,14 @@ public class GatewayServiceImplementation implements GatewayService {
     final private String gamesServiceUrl = "http://localhost:8072";
 
     @Override
-    public void addUser(String user) throws IOException {
+    public String addUser(String user) throws IOException {
         CloseableHttpClient httpClient = HttpClientBuilder.create().build();
         HttpPost request = new HttpPost(usersServiceUrl + "/users");
         StringEntity parameters = new StringEntity(user);
         request.addHeader("content-type", "application/json");
         request.setEntity(parameters);
-        httpClient.execute(request);
+        HttpResponse response = httpClient.execute(request);
+        return EntityUtils.toString(response.getEntity());
     }
 
     @Override
@@ -50,13 +50,14 @@ public class GatewayServiceImplementation implements GatewayService {
     }
 
     @Override
-    public void addGame(String game) throws IOException {
+    public String addGame(String game) throws IOException {
         CloseableHttpClient httpClient = HttpClientBuilder.create().build();
         HttpPost request = new HttpPost(gamesServiceUrl + "/games");
         StringEntity parameters = new StringEntity(game);
         request.addHeader("content-type", "application/json");
         request.setEntity(parameters);
-        httpClient.execute(request);
+        HttpResponse response = httpClient.execute(request);
+        return EntityUtils.toString(response.getEntity());
     }
 
     @Override
@@ -85,7 +86,7 @@ public class GatewayServiceImplementation implements GatewayService {
 
 
     @Override
-    public void addGroup(String group) throws IOException, JSONException {
+    public String addGroup(String group) throws IOException, JSONException {
         JSONObject jo = new JSONObject(group);
         CloseableHttpClient httpClient = HttpClientBuilder.create().build();
 
@@ -105,7 +106,8 @@ public class GatewayServiceImplementation implements GatewayService {
         StringEntity parameters = new StringEntity(group);
         request.addHeader("content-type", "application/json");
         request.setEntity(parameters);
-        httpClient.execute(request);
+        response = httpClient.execute(request);
+        return EntityUtils.toString(response.getEntity());
     }
 
     @Override
@@ -167,7 +169,7 @@ public class GatewayServiceImplementation implements GatewayService {
     }
 
     @Override
-    public void deleteGroup(Long id) throws IOException, JSONException {
+    public boolean deleteGroup(Long id) throws IOException, JSONException {
         CloseableHttpClient httpClient = HttpClientBuilder.create().build();
         HttpGet request = new HttpGet(groupsServiceUrl + "/groups/id/" + id);
         HttpResponse response = httpClient.execute(request);
@@ -208,17 +210,18 @@ public class GatewayServiceImplementation implements GatewayService {
 
         HttpDelete delRequest = new HttpDelete(groupsServiceUrl + "groups/delete/" + group.get("gameId"));
         httpClient.execute(delRequest);
+        return true;
     }
 
     @Override
-    public void addPlayer(Long userId, Long groupId) throws IOException, JSONException {
+    public String addPlayer(Long userId, Long groupId) throws IOException, JSONException {
         CloseableHttpClient httpClient = HttpClientBuilder.create().build();
         HttpGet getRequest = new HttpGet(groupsServiceUrl + "/groups/id/" + groupId);
         HttpResponse response = httpClient.execute(getRequest);
         String group = EntityUtils.toString(response.getEntity());
         JSONObject jgroup = new JSONObject(group);
         if (Integer.valueOf(jgroup.getString("freeSpace"))==0)
-            return;
+            return "";
 
         getRequest = new HttpGet(usersServiceUrl + "/users/id/" + userId);
         response = httpClient.execute(getRequest);
@@ -235,11 +238,12 @@ public class GatewayServiceImplementation implements GatewayService {
 
         HttpPost request = new HttpPost(groupsServiceUrl + "/groups/players/add?groupId="+groupId+"&userId="+userId);
         response = httpClient.execute(request);
+        return EntityUtils.toString(response.getEntity());
 
     }
 
     @Override
-    public void removePlayer(Long userId, Long groupId) throws IOException, JSONException {
+    public boolean removePlayer(Long userId, Long groupId) throws IOException, JSONException {
         CloseableHttpClient httpClient = HttpClientBuilder.create().build();
         HttpGet getRequest = new HttpGet(usersServiceUrl + "/users/id/" + userId);
         HttpResponse response = httpClient.execute(getRequest);
@@ -256,5 +260,6 @@ public class GatewayServiceImplementation implements GatewayService {
         HttpDelete request = new HttpDelete(groupsServiceUrl + "/groups/players/remove?groupId=" + groupId +
                 "&userId=" + userId);
         httpClient.execute(request);
+        return true;
     }
 }
