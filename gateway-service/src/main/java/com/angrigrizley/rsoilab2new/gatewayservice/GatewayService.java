@@ -12,7 +12,7 @@ public interface GatewayService  {
 
     //game service
     String addGame(String game) throws IOException;
-    String getGames() throws IOException;
+    String getGames(int page, int size) throws IOException;
     String getGameById(Long id) throws IOException;
     String searchGames(String genre, int num) throws IOException;
 

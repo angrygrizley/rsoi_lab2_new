@@ -7,6 +7,9 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -67,10 +70,17 @@ public class GamesServiceImplementationTest {
         List<Game> lg = new ArrayList<>();
         lg.add(game);
 
-        given(gamesRepository.findAll()).willReturn(lg);
+        Page<Game> pg = new PageImpl<>(lg);
 
-        List<Game> listg = gamesService.getGames();
-        assertEquals(listg, lg);
+
+
+        PageRequest p = PageRequest.of(1,5);
+
+        given(gamesRepository.findAll(p)).willReturn(pg);
+
+
+        Page<Game> pageg = gamesService.getGames(p);
+        assertEquals(pageg, pg);
     }
 
     @Test
@@ -138,6 +148,6 @@ public class GamesServiceImplementationTest {
 
         gamesService.addGame(game);
         gamesService.deleteGame(1L);
-        assertEquals(gamesService.getGames().isEmpty(), true);
+        assertEquals(gamesService.getGames(PageRequest.of(1,5)).isEmpty(), true);
     }
 }

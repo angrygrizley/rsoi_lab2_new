@@ -2,6 +2,8 @@ package com.angrygrizley.rsoilab2new.gamesservice;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -18,7 +20,7 @@ public class GamesServiceImplementation implements GamesService {
     public Game addGame(Game game) { return gamesRepository.save(game); }
 
     @Override
-    public List<Game> getGames() { return gamesRepository.findAll();}
+    public Page<Game> getGames(PageRequest p) { return gamesRepository.findAll(p);}
 
     @Override
     public Game getGameById(Long id) throws GameNotFoundException

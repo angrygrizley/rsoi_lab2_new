@@ -3,6 +3,8 @@ package com.angrygrizley.rsoilab2new.gamesservice;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,9 +27,11 @@ public class GamesServiceController {
     }
 
     @GetMapping(value = "/games")
-    public List<Game> getGames() {
+    public Page<Game> getGames(@RequestParam (value = "page", required = false, defaultValue = "1") int pageNum,
+                               @RequestParam (value = "size", required = false, defaultValue = "5") int size) {
         logger.info("[GET] /games");
-        return gamesService.getGames();
+        PageRequest p = PageRequest.of(pageNum, size);
+        return gamesService.getGames(p);
     }
 
     @GetMapping(value = "/games/id/{id}")

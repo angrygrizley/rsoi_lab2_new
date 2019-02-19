@@ -61,9 +61,9 @@ public class GatewayServiceImplementation implements GatewayService {
     }
 
     @Override
-    public String getGames() throws IOException {
+    public String getGames(int page, int size) throws IOException {
         CloseableHttpClient httpClient = HttpClientBuilder.create().build();
-        HttpGet request = new HttpGet(gamesServiceUrl + "/games");
+        HttpGet request = new HttpGet(gamesServiceUrl + "/games?page="+page+"&size="+size);
         HttpResponse response = httpClient.execute(request);
         return EntityUtils.toString(response.getEntity());
     }
