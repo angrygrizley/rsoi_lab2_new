@@ -17,7 +17,7 @@ public class GroupsServiceImplementation implements GroupsService {
     }
 
     @Override
-    public void addGroup(Group group) { groupsRepository.save(group); }
+    public Group addGroup(Group group) { return groupsRepository.save(group); }
 
     @Override
     public void deleteGroup(Long id) {
@@ -56,15 +56,19 @@ public class GroupsServiceImplementation implements GroupsService {
     }
 
     @Override
-    public void addPlayer(Long groupId, Long playerId) throws GroupNotFoundException {
+    public Placement addPlayer(Long groupId, Long playerId) throws GroupNotFoundException, NoFreeSpaceException {
         Group g = groupsRepository.findById(groupId).orElseThrow(() -> new GroupNotFoundException(groupId));
         int freeSpace = g.getFreeSpace();
         if (freeSpace != 0) {
-            Placement placement = placementRepository.save(new Placement(groupId, playerId));
+            Placement newP = new Placement(groupId, playerId);
+            Placement placement = placementRepository.save(newP);
             g.getPlayers().add(placement);
             g.setFreeSpace(freeSpace-1);
             groupsRepository.save(g);
+
+            return placement;
         }
+        else throw new NoFreeSpaceException(groupId);
     }
 
     @Override

@@ -30,6 +30,11 @@ public class Placement {
 
     public Placement() {};
 
+    public Placement(Long groupId, Long playerId) {
+        this.groupId = groupId;
+        this.playerId = playerId;
+    }
+
 
     @Override
     public boolean equals(Object o) {
@@ -55,10 +60,7 @@ public class Placement {
                 '}';
     }
 
-    public Placement(Long groupId, Long playerId) {
-        this.groupId = groupId;
-        this.playerId = playerId;
-    }
+
 
 }
 

@@ -20,15 +20,15 @@ public class GroupsServiceController {
     }
 
     @PostMapping(value = "/groups")
-    public void addGroup(@RequestBody Group group){
-        groupsService.addGroup(group);
+    public Group addGroup(@RequestBody Group group){
         logger.info("[POST] /groups " + group);
+        return groupsService.addGroup(group);
     }
 
-    @DeleteMapping(value = "groups/delete/{id}")
+    @DeleteMapping(value = "/groups/delete/{id}")
     public void deleteGroup(@PathVariable Long id) {
-        groupsService.deleteGroup(id);
         logger.info("[DELETE] /groups/delete/" + id);
+        groupsService.deleteGroup(id);
     }
 
     @GetMapping(value="/groups")
@@ -55,14 +55,21 @@ public class GroupsServiceController {
         return groupsService.getFreeGroups();
     }
 
+    @GetMapping(value="/groups/game")
+    public List<Group> getGroupsForGame(@RequestParam (value="gameId") Long gameId){
+        logger.info("[GET] /group/game game: " + gameId);
+        return groupsService.getGroupsForGame(gameId);
+    }
+
     @PostMapping(value="/groups/players/add")
-    public void addPlayers(@RequestParam (value = "userId") Long playerId, @RequestParam (value = "groupId") Long groupId){
+    public Placement addPlayers(@RequestParam (value = "userId") Long playerId, @RequestParam (value = "groupId") Long groupId) throws NoFreeSpaceException {
         logger.info("[POST] /groups/players/add " + playerId + " to " + groupId);
         try {
-            groupsService.addPlayer(groupId, playerId);
+            return groupsService.addPlayer(groupId, playerId);
         } catch (GroupNotFoundException e) {
             e.printStackTrace();
         }
+        return new Placement();
     }
 
     @DeleteMapping(value="/groups/players/remove")
