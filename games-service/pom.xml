@@ -8,8 +8,6 @@
     <version>0.1</version>
     <packaging>jar</packaging>
 
-    <title>games-service</title>
-    <description>Games microservice</description>
 
     <parent>
         <groupId>com.angrygrizley</groupId>
