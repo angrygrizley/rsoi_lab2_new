@@ -51,9 +51,6 @@
     </dependencies>
     <packaging>pom</packaging>
 
-    <title>RSOI2</title>
-    <description>RSOI2</description>
-
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
