@@ -1,2 +1,17 @@
 language: java
+
+services:
+  - postgresql
+
+before_script:
+  - psql -c "create database games_db" -U postgres
+  - psql -c "create database users_db" -U postgres
+  - psql -c "create database groups_db" -U postgres
+  - psql -c "create role program with password 'dbconnect'" -U postgres
+  - psql -c "grant all privileges on database games_db to program" -U postgres
+  - psql -c "grant all privileges on database users_db to program" -U postgres
+  - psql -c "grant all privileges on database groups_db to program" -U postgres
+  - psql -c "alter role program with login" -U postgres
+
+
 script: mvn clean compile test
