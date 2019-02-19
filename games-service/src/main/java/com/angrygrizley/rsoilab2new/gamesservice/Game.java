@@ -23,7 +23,7 @@ public class Game {
     private int maxNum;
 
     @Column(name = "groupNum")
-    private Long groupNum;
+    private int groupNum;
 
     public Long getId() { return id; }
 
@@ -45,9 +45,9 @@ public class Game {
 
     public void setMaxNum(int maxNum) { this.maxNum = maxNum; }
 
-    public Long getGroupNum() { return groupNum; }
+    public int getGroupNum() { return groupNum; }
 
-    public void setGroupNum(Long groupNum) { this.groupNum = groupNum; }
+    public void setGroupNum(int groupNum) { this.groupNum = groupNum; }
 
     @Override
     public boolean equals(Object o) {
@@ -59,7 +59,7 @@ public class Game {
                 id.equals(game.id) &&
                 title.equals(game.title) &&
                 genre.equals(game.genre) &&
-                groupNum.equals(game.groupNum);
+                groupNum == game.groupNum;
     }
 
     @Override
@@ -67,5 +67,6 @@ public class Game {
         return Objects.hash(id, title, genre, minNum, maxNum, groupNum);
     }
 
-
+    public Game() {
+    }
 }

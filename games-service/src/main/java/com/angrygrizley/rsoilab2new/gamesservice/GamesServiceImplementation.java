@@ -15,7 +15,7 @@ public class GamesServiceImplementation implements GamesService {
     public GamesServiceImplementation(GamesRepository gamesRepository) {this.gamesRepository = gamesRepository; }
 
     @Override
-    public void addGame(Game game) { gamesRepository.save(game); }
+    public Game addGame(Game game) { return gamesRepository.save(game); }
 
     @Override
     public List<Game> getGames() { return gamesRepository.findAll();}
@@ -50,5 +50,5 @@ public class GamesServiceImplementation implements GamesService {
     }
 
     @Override
-    public void deleteGame(Long id) { gamesRepository.deleteById(id); }
+    public void deleteGame(Long id) { gamesRepository.deleteById(id);}
 }

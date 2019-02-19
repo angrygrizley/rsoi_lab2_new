@@ -19,9 +19,9 @@ public class GamesServiceController {
     }
 
     @PostMapping(value = "/games")
-    public void addGame(@RequestBody Game game) {
+    public Game addGame(@RequestBody Game game) {
         logger.info("[POST] /games", game);
-        gamesService.addGame(game);
+        return gamesService.addGame(game);
     }
 
     @GetMapping(value = "/games")
@@ -49,7 +49,7 @@ public class GamesServiceController {
         return gamesService.searchGames(genre, num);
     }
 
-    @DeleteMapping(value = "/game/delete/{id}")
+    @DeleteMapping(value = "/games/delete/{id}")
     public void deleteGame(@PathVariable Long id)
     {
         logger.info("[DELETE] /game/delete/" + id);
