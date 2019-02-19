@@ -17,8 +17,8 @@ public class User {
     @Column(name = "login", unique = true)
     private String login;
 
-    @Column(name="group_num", columnDefinition = "int default 0")
-    private int group_num;
+    @Column(name="groupNum", columnDefinition = "int default 0")
+    private int groupNum;
 
     public Long getId() { return id; }
 
@@ -32,9 +32,9 @@ public class User {
 
     public void setLogin(String login) { this.login = login; }
 
-    public int getGroupNum() { return group_num; }
+    public int getGroupNum() { return groupNum; }
 
-    public void setGroupNum(int group_num) { this.group_num = group_num; }
+    public void setGroupNum(int group_num) { this.groupNum = group_num; }
 
     @Override
     public String toString() {
@@ -42,7 +42,7 @@ public class User {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", login='" + login + '\'' +
-                ", group_num=" + group_num +
+                ", groupNum=" + groupNum +
                 '}';
     }
 
@@ -51,7 +51,7 @@ public class User {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return group_num == user.group_num &&
+        return groupNum == user.groupNum &&
                 Objects.equals(id, user.id) &&
                 Objects.equals(name, user.name) &&
                 Objects.equals(login, user.login);
@@ -59,6 +59,6 @@ public class User {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, login, group_num);
+        return Objects.hash(id, name, login, groupNum);
     }
 }

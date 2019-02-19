@@ -1,5 +1,6 @@
 package com.angrigrizley.rsoilab2new.gatewayservice;
 
+import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,26 +57,23 @@ public class GatewayServiceController {
         return gatewayService.getGameById(id);
     }
 
-    @GetMapping(path = "/games/genre/{genre}")
-    public String getGamesByGenre(@PathVariable String genre) throws IOException {
-        logger.info("[GET] /games/genre/" + genre);
-        return gatewayService.getGamesByGenre(genre);
+    @GetMapping(path = "/games/search")
+    public String getGamesByGenre(@RequestParam (value = "genre", required = false, defaultValue = "") String genre,
+                                  @RequestParam (value = "playernum", required = false, defaultValue = "-1") int num)
+            throws IOException {
+        logger.info("[GET] /games/search genre:" + genre + " playernum:" + num);
+        return gatewayService.searchGames(genre, num);
     }
 
-    @GetMapping(path = "/games/playernum/{num}")
-    public String getGamesByPlayerNum(@PathVariable int num) throws IOException {
-        logger.info("[GET] /games/playernum/" + num);
-        return gatewayService.getGamesByPlayerNum(num);
-    }
 
     @PostMapping(path = "/groups")
-    public void addGroup(@RequestBody String group) throws IOException {
+    public void addGroup(@RequestBody String group) throws IOException, JSONException {
         logger.info("[POST] /groups"+group);
         gatewayService.addGroup(group);
     }
 
     @DeleteMapping(path = "/groups/delete/{id}")
-    public void deleteGroup(Long id) throws IOException {
+    public void deleteGroup(Long id) throws IOException, JSONException {
         logger.info("[DELETE] /groups/delete/" + id);
         gatewayService.deleteGroup(id);
     }
@@ -87,7 +85,7 @@ public class GatewayServiceController {
     }
 
     @GetMapping(path="/groups/id/{id}")
-    public String getGroupdById(@PathVariable Long id) throws IOException {
+    public String getGroupdById(@PathVariable Long id) throws IOException, JSONException {
         logger.info("[GET] /groups/id" + id);
         return gatewayService.getGroupById(id);
     }
@@ -106,14 +104,14 @@ public class GatewayServiceController {
 
     @PostMapping(path = "/groups/players/add")
     public void addPlayer(@RequestParam (value = "userid") Long userId, @RequestParam (value = "groupid") Long groupId)
-            throws  IOException {
+            throws IOException, JSONException {
         logger.info("[POST] /groups/players/add" + userId + " to group " + groupId);
         gatewayService.addPlayer(userId, groupId);
     }
 
     @DeleteMapping(path = "/groups/players/remove")
     public void removePlayer(@RequestParam (value = "userid") Long userId, @RequestParam (value = "groupid") Long groupId)
-            throws  IOException {
+            throws IOException, JSONException {
         logger.info("[POST] /groups/players/remove" + userId + " from group " + groupId);
         gatewayService.removePlayer(userId, groupId);
     }
