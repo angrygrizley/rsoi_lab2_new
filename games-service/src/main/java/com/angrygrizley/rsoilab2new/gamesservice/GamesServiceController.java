@@ -27,7 +27,7 @@ public class GamesServiceController {
     }
 
     @GetMapping(value = "/games")
-    public Page<Game> getGames(@RequestParam (value = "page", required = false, defaultValue = "1") int pageNum,
+    public Page<Game> getGames(@RequestParam (value = "page", required = false, defaultValue = "0") int pageNum,
                                @RequestParam (value = "size", required = false, defaultValue = "5") int size) {
         logger.info("[GET] /games");
         PageRequest p = PageRequest.of(pageNum, size);

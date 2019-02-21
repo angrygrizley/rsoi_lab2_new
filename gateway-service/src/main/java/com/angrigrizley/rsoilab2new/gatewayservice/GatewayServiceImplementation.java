@@ -71,7 +71,7 @@ public class GatewayServiceImplementation implements GatewayService {
     @Override
     public String getGameById(Long id) throws IOException {
         CloseableHttpClient httpClient = HttpClientBuilder.create().build();
-        HttpGet request = new HttpGet(gamesServiceUrl + "/games/id"+id);
+        HttpGet request = new HttpGet(gamesServiceUrl + "/games/id/"+id);
         HttpResponse response = httpClient.execute(request);
         return EntityUtils.toString(response.getEntity());
     }
@@ -121,7 +121,7 @@ public class GatewayServiceImplementation implements GatewayService {
     @Override
     public String getGroupsByGame(Long gameId) throws IOException {
         CloseableHttpClient httpClient = HttpClientBuilder.create().build();
-        HttpGet request = new HttpGet(groupsServiceUrl + "/groups/game/" + gameId);
+        HttpGet request = new HttpGet(groupsServiceUrl + "/groups/game?gameId=" + gameId);
         HttpResponse response = httpClient.execute(request);
         return EntityUtils.toString(response.getEntity());
     }
@@ -148,7 +148,9 @@ public class GatewayServiceImplementation implements GatewayService {
         JSONObject result = new JSONObject();
         result.put("game", game);
 
-        JSONArray placements = new JSONArray(group.get("players"));
+
+        JSONArray placements = group.getJSONArray("players");//new JSONArray(group.get("players"));
+
 
         int k = placements.length();
         JSONArray usersList = new JSONArray();
@@ -186,7 +188,7 @@ public class GatewayServiceImplementation implements GatewayService {
         putRequest.setEntity(putParameters);
         httpClient.execute(putRequest);
 
-        JSONArray placements = new JSONArray(group.get("players"));
+        JSONArray placements = group.getJSONArray("players");
 
         int k = placements.length();
         JSONArray usersList = new JSONArray();
@@ -201,14 +203,14 @@ public class GatewayServiceImplementation implements GatewayService {
             user = new JSONObject(EntityUtils.toString(response.getEntity()));
             user.put("groupNum", String.valueOf(user.getInt("groupNum")-1));
 
-            putRequest = new HttpPut(usersServiceUrl + "users/edit");
+            putRequest = new HttpPut(usersServiceUrl + "/users/edit");
             putParameters = new StringEntity(user.toString());
             putRequest.addHeader("content-type", "application/json");
             putRequest.setEntity(putParameters);
             httpClient.execute(putRequest);
         }
 
-        HttpDelete delRequest = new HttpDelete(groupsServiceUrl + "groups/delete/" + group.get("gameId"));
+        HttpDelete delRequest = new HttpDelete(groupsServiceUrl + "/groups/delete/" + group.get("gameId"));
         httpClient.execute(delRequest);
         return true;
     }
@@ -251,15 +253,16 @@ public class GatewayServiceImplementation implements GatewayService {
         JSONObject juser = new JSONObject(user);
         juser.put("groupNum", String.valueOf(juser.getInt("groupNum")-1));
 
+        HttpDelete request = new HttpDelete(groupsServiceUrl + "/groups/players/remove?groupId=" + groupId +
+                "&userId=" + userId);
+        httpClient.execute(request);
+
         HttpPut putRequest = new HttpPut(usersServiceUrl + "/users/edit");
         StringEntity putParameters = new StringEntity(juser.toString());
         putRequest.addHeader("content-type", "application/json");
         putRequest.setEntity(putParameters);
         httpClient.execute(putRequest);
 
-        HttpDelete request = new HttpDelete(groupsServiceUrl + "/groups/players/remove?groupId=" + groupId +
-                "&userId=" + userId);
-        httpClient.execute(request);
         return true;
     }
 }

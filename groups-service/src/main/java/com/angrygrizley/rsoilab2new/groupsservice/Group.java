@@ -18,7 +18,7 @@ public class Group {
     private int freeSpace;
 
     @Column(name = "gameId")
-    private int gameId;
+    private Long gameId;
 
     @OneToMany(fetch = FetchType.EAGER, cascade=CascadeType.ALL)
     private List<Placement> players;
@@ -35,9 +35,9 @@ public class Group {
 
     public void setFreeSpace(int freeSpace) { this.freeSpace = freeSpace; }
 
-    public int getGameId() { return gameId; }
+    public Long getGameId() { return gameId; }
 
-    public void setGameId(int gameId) { this.gameId = gameId; }
+    public void setGameId(Long gameId) { this.gameId = gameId; }
 
     public List<Placement> getPlayers() { return players; }
 

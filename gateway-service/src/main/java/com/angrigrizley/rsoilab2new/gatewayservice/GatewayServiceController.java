@@ -46,7 +46,7 @@ public class GatewayServiceController {
     }
 
     @GetMapping(path = "/games")
-    public String getGames(@RequestParam (value = "page", required = false, defaultValue = "1") int page,
+    public String getGames(@RequestParam (value = "page", required = false, defaultValue = "0") int page,
                            @RequestParam (value = "size", required = false, defaultValue = "5") int size) throws IOException {
         logger.info("[GET] /games");
         return gatewayService.getGames(page, size);

@@ -137,7 +137,7 @@ public class GatewayServiceControllerTest {
         JSONArray gameList = new JSONArray();
         gameList.put(game);
 
-        doReturn(gameList.toString()).when(gatewayService).getGames();
+        doReturn(gameList.toString()).when(gatewayService).getGames(1, 1);
 
         mvc.perform(get("/games"))
                 .andExpect(status().isOk());

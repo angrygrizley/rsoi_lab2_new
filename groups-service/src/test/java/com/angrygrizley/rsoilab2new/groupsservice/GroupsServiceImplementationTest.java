@@ -33,7 +33,7 @@ public class GroupsServiceImplementationTest {
     public void addGroup() {
         Group group = new Group();
         group.setGroupName("Club d6");
-        group.setGameId(1);
+        group.setGameId(1L);
         Placement placement = new Placement();
         placement.setGroupId(1L);
         placement.setPlayerId(1L);
@@ -53,7 +53,7 @@ public class GroupsServiceImplementationTest {
     public void deleteGroup() {
         Group group = new Group();
         group.setGroupName("Club d6");
-        group.setGameId(1);
+        group.setGameId(1L);
         Placement placement = new Placement();
         placement.setGroupId(1L);
         placement.setPlayerId(1L);
@@ -72,7 +72,7 @@ public class GroupsServiceImplementationTest {
     public void getGroups() {
         Group group = new Group();
         group.setGroupName("Club d6");
-        group.setGameId(1);
+        group.setGameId(1L);
         Placement placement = new Placement();
         placement.setGroupId(1L);
         placement.setPlayerId(1L);
@@ -94,7 +94,7 @@ public class GroupsServiceImplementationTest {
     public void getGroupById() throws Exception {
         Group group = new Group();
         group.setGroupName("Club d6");
-        group.setGameId(1);
+        group.setGameId(1L);
         Placement placement = new Placement();
         placement.setGroupId(1L);
         placement.setPlayerId(1L);
@@ -113,7 +113,7 @@ public class GroupsServiceImplementationTest {
     public void putGroup() throws GroupNotFoundException {
         Group group = new Group();
         group.setGroupName("Club d6");
-        group.setGameId(1);
+        group.setGameId(1L);
         group.setId(1L);
         Placement placement = new Placement();
         placement.setGroupId(1L);
@@ -134,7 +134,7 @@ public class GroupsServiceImplementationTest {
     public void getFreeGroups() {
         Group group = new Group();
         group.setGroupName("Club d6");
-        group.setGameId(1);
+        group.setGameId(1L);
         Placement placement = new Placement();
         placement.setGroupId(1L);
         placement.setPlayerId(1L);
@@ -158,7 +158,7 @@ public class GroupsServiceImplementationTest {
     public void getGroupsForGame() {
         Group group = new Group();
         group.setGroupName("Club d6");
-        group.setGameId(1);
+        group.setGameId(1L);
         Placement placement = new Placement();
         placement.setGroupId(1L);
         placement.setPlayerId(1L);
@@ -187,7 +187,7 @@ public class GroupsServiceImplementationTest {
     public void removePlayer() throws GroupNotFoundException, PlacementNotFoundException {
         Group group = new Group();
         group.setGroupName("Club d6");
-        group.setGameId(1);
+        group.setGameId(1L);
         group.setId(1L);
 
         Placement placement = new Placement();

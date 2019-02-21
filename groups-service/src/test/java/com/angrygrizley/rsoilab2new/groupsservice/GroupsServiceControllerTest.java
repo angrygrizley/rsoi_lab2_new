@@ -61,7 +61,7 @@ public class GroupsServiceControllerTest {
     public void addGroup() throws Exception {
         Group group = new Group();
         group.setGroupName("GroupName");
-        group.setGameId(1);
+        group.setGameId(1L);
         group.setFreeSpace(1);
         group.setId(1L);
 
@@ -88,7 +88,7 @@ public class GroupsServiceControllerTest {
     public void deleteGroup() throws Exception {
         Group group = new Group();
         group.setGroupName("GroupName");
-        group.setGameId(1);
+        group.setGameId(1L);
         group.setFreeSpace(1);
         group.setId(1L);
 
@@ -112,7 +112,7 @@ public class GroupsServiceControllerTest {
     public void getGroups() throws Exception {
         Group group = new Group();
         group.setGroupName("GroupName");
-        group.setGameId(1);
+        group.setGameId(1L);
         group.setFreeSpace(1);
         group.setId(1L);
 
@@ -140,7 +140,7 @@ public class GroupsServiceControllerTest {
     public void getGroupById() throws Exception {
         Group group = new Group();
         group.setGroupName("GroupName");
-        group.setGameId(1);
+        group.setGameId(1L);
         group.setFreeSpace(1);
         group.setId(1L);
 
@@ -164,7 +164,7 @@ public class GroupsServiceControllerTest {
     public void putGroup() throws Exception {
         Group group = new Group();
         group.setGroupName("GroupName");
-        group.setGameId(1);
+        group.setGameId(1L);
         group.setFreeSpace(1);
         group.setId(1L);
 
@@ -192,7 +192,7 @@ public class GroupsServiceControllerTest {
     public void getFreeGroups() throws Exception {
         Group group = new Group();
         group.setGroupName("GroupName");
-        group.setGameId(1);
+        group.setGameId(1L);
         group.setFreeSpace(1);
         group.setId(1L);
 
@@ -223,7 +223,7 @@ public class GroupsServiceControllerTest {
     public void getGroupsForGame() throws Exception {
         Group group = new Group();
         group.setGroupName("GroupName");
-        group.setGameId(1);
+        group.setGameId(1L);
         group.setFreeSpace(1);
         group.setId(1L);
 
@@ -281,7 +281,7 @@ public class GroupsServiceControllerTest {
     public void removePlayers() throws Exception {
         Group group = new Group();
         group.setGroupName("GroupName");
-        group.setGameId(1);
+        group.setGameId(1L);
         group.setFreeSpace(1);
         group.setId(1L);
 
