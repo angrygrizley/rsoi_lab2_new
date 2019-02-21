@@ -210,7 +210,7 @@ public class GatewayServiceImplementation implements GatewayService {
             httpClient.execute(putRequest);
         }
 
-        HttpDelete delRequest = new HttpDelete(groupsServiceUrl + "/groups/delete/" + group.get("gameId"));
+        HttpDelete delRequest = new HttpDelete(groupsServiceUrl + "/groups/delete/" + id);
         httpClient.execute(delRequest);
         return true;
     }
