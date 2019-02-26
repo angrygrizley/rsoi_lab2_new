@@ -1,6 +1,9 @@
 package com.angrigrizley.rsoilab2new.gatewayservice;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.json.JSONException;
+import org.springframework.http.ResponseEntity;
 
 import java.io.IOException;
 
@@ -30,4 +33,10 @@ public interface GatewayService  {
     String addPlayer(Long userId, Long groupId) throws IOException, JSONException;
     boolean removePlayer(Long userId, Long groupId) throws IOException, JSONException;
 
+    HttpResponse requestToken(String username, String password, String url, String clientCred) throws IOException;
+    ResponseEntity<String> getCode(String client_id, String redirect_uri, String url) throws IOException;
+    HttpResponse codeToToken(String redirect_uri, String code, String url, String client_cred) throws IOException;
+
+    boolean checkToken(String token, String url) throws IOException;
+    HttpResponse oauthExecute(HttpUriRequest request, StringBuilder token, String serviceUrl) throws IOException;
 }
