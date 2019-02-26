@@ -63,6 +63,7 @@
         <module>gateway-service</module>
         <module>games-service</module>
         <module>groups-service</module>
+        <module>authorization-service</module>
     </modules>
 
 </project>
