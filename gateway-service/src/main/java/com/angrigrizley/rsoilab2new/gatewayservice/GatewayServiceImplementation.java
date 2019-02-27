@@ -360,6 +360,7 @@ public class GatewayServiceImplementation implements GatewayService {
         return response;
     }
 
+    // Откат
     @Override
     public HttpResponse addPlayer(Long userId, Long groupId) throws Exception, JSONException {
         CloseableHttpClient httpClient = HttpClientBuilder.create().build();
@@ -371,6 +372,7 @@ public class GatewayServiceImplementation implements GatewayService {
 
         String group = EntityUtils.toString(response.getEntity());
         JSONObject jgroup = new JSONObject(group);
+        JSONObject jbackupgroup = jgroup;
         if (Integer.valueOf(jgroup.getString("freeSpace")) == 0)
             return response;
 
@@ -382,7 +384,9 @@ public class GatewayServiceImplementation implements GatewayService {
         users_token = sb.toString();
 
         String user = EntityUtils.toString(response.getEntity());
+
         JSONObject juser = new JSONObject(user);
+        JSONObject jbackupuser = juser;
         juser.put("groupNum", String.valueOf(juser.getInt("groupNum") + 1));
 
         HttpPut putRequest = new HttpPut(usersServiceUrl + "/users/edit");
@@ -395,17 +399,57 @@ public class GatewayServiceImplementation implements GatewayService {
         response = oauthExecute(putRequest, sb, usersServiceUrl);
         users_token = sb.toString();
 
+
         HttpPost request = new HttpPost(groupsServiceUrl + "/groups/players/add?groupId=" + groupId + "&userId=" + userId);
 
         sb.delete(0, sb.length());
         sb.append(groups_token);
-        response = oauthExecute(getRequest, sb, groupsServiceUrl);
+        HttpResponse response2 = oauthExecute(getRequest, sb, groupsServiceUrl);
         groups_token = sb.toString();
 
-        return response;
 
+        // Если один из сервисов недоступен
+        if (response.getStatusLine().getStatusCode() == 502 || response2.getStatusLine().getStatusCode() == 502) {
+            HttpResponse backupResponce;
+
+            HttpPut backupUserRequest = new HttpPut(usersServiceUrl + "/users/edit");
+            putRequest.addHeader("content-type", "application/json");
+            putRequest.setEntity(new StringEntity(jbackupuser.toString()));
+
+            sb.delete(0, sb.length());
+            sb.append(users_token);
+            backupResponce = oauthExecute(backupUserRequest, sb, usersServiceUrl);
+            users_token = sb.toString();
+
+
+            HttpPut backupGroupRequest = new HttpPut(groupsServiceUrl + "/groups/edit");
+            putRequest.addHeader("content-type", "application/json");
+            putRequest.setEntity(new StringEntity(jbackupgroup.toString()));
+
+            sb.delete(0, sb.length());
+            sb.append(groups_token);
+            backupResponce = oauthExecute(backupGroupRequest, sb, groupsServiceUrl);
+            groups_token = sb.toString();
+            backupResponce.setStatusCode(500);
+            JSONObject backup = new JSONObject();
+            backup.put("error", "Some service was unavailable. Rollback was successfull.");
+            backupResponce.setEntity(new StringEntity(backup.toString()));
+
+            return backupResponce;
+        }
+
+        HttpResponseFactory factory = new DefaultHttpResponseFactory();
+        HttpResponse res = factory.newHttpResponse(new BasicStatusLine(HttpVersion.HTTP_1_1, HttpStatus.SC_BAD_REQUEST, null), null);
+
+        res.setStatusCode(200);
+        JSONObject backup = new JSONObject();
+        backup.put("information", "Operation success!");
+        res.setEntity(new StringEntity(backup.toString()));
+
+        return res;
     }
 
+    // Очередь
     @Override
     public HttpResponse removePlayer(Long userId, Long groupId) throws Exception, JSONException {
         CloseableHttpClient httpClient = HttpClientBuilder.create().build();
