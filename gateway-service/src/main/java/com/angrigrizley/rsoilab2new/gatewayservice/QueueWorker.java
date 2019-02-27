@@ -29,147 +29,151 @@ public class QueueWorker implements Runnable {
     }
 
     public void run() {
-        while(queue.exists("get")) {
-            JSONObject req = null;
-            try {
-                req = new JSONObject(queue.rpop("get"));
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            CloseableHttpResponse httpResponse = null;
-            try {
-                CloseableHttpClient httpClient = HttpClients.createDefault();
-
-
-                String url = null;
+        while (true) {
+            while (queue.exists("get")) {
+                System.out.println("get req");
+                JSONObject req = null;
                 try {
-                    url = req.getString("url");
+                    req = new JSONObject(queue.rpop("get"));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                HttpGet request = new HttpGet(url);
+                CloseableHttpResponse httpResponse = null;
+                try {
+                    CloseableHttpClient httpClient = HttpClients.createDefault();
 
-                String t = this.getToken(new URL(new URL(url.toString()), "/").toString());
 
-                request.addHeader("Authorization", "Bearer " + t);
-                httpResponse = httpClient.execute(request);
+                    String url = null;
+                    try {
+                        url = req.getString("url");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    HttpGet request = new HttpGet(url);
 
-            } catch (Exception e) {
-                e.printStackTrace();
-                if (httpResponse.getStatusLine().getStatusCode() != 200) {
-                    queue.lpush("get", req.toString());
+                    String t = this.getToken(new URL(new URL(url.toString()), "/").toString());
+
+                    request.addHeader("Authorization", "Bearer " + t);
+                    httpResponse = httpClient.execute(request);
+
+                } catch (Exception e) {
+                    //e.printStackTrace();
+               //     if (httpResponse.getStatusLine().getStatusCode() != 200 || httpResponse == null) {
+                        queue.lpush("get", req.toString());
+                 //   }
                 }
             }
-        }
-        while(queue.exists("put")) {
-            JSONObject req = null;
-            try {
-                req = new JSONObject(queue.rpop("put"));
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            CloseableHttpResponse httpResponse = null;
-            try {
-                CloseableHttpClient httpClient = HttpClients.createDefault();
-                String url = null;
-                String body = "";
+            while (queue.exists("put")) {
+                System.out.println("put req");
+                JSONObject req = null;
                 try {
-                    url = req.getString("url");
-                    body = req.getString("body");
+                    req = new JSONObject(queue.rpop("put"));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+                CloseableHttpResponse httpResponse = null;
+                try {
+                    CloseableHttpClient httpClient = HttpClients.createDefault();
+                    String url = null;
+                    String body = "";
+                    try {
+                        url = req.getString("url");
+                        body = req.getString("body");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
 
-                HttpPut request = new HttpPut(url);
-                request.setEntity(new StringEntity(body));
+                    HttpPut request = new HttpPut(url);
+                    request.setEntity(new StringEntity(body));
 
-                String t = this.getToken(new URL(new URL(url.toString()), "/").toString());
+                    String t = this.getToken(new URL(new URL(url.toString()), "/").toString());
 
-                request.addHeader("Authorization", "Bearer " + t);
-                httpResponse = httpClient.execute(request);
+                    request.addHeader("Authorization", "Bearer " + t);
+                    httpResponse = httpClient.execute(request);
 
-            } catch (Exception e) {
-                e.printStackTrace();
-                if (httpResponse.getStatusLine().getStatusCode() != 200) {
-                    queue.lpush("put", req.toString());
+                } catch (Exception e) {
+                    //e.printStackTrace();
+                 //   if (httpResponse.getStatusLine().getStatusCode() != 200 || httpResponse == null) {
+                        queue.lpush("put", req.toString());
+                 //   }
                 }
             }
-        }
-        while(queue.exists("post")) {
-            JSONObject req = null;
-            try {
-                req = new JSONObject(queue.rpop("push"));
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            CloseableHttpResponse httpResponse = null;
-            try {
-                CloseableHttpClient httpClient = HttpClients.createDefault();
-                String url = null;
-                String body = "";
+            while (queue.exists("post")) {
+                System.out.println("post req");
+                JSONObject req = null;
                 try {
-                    url = req.getString("url");
-                    body = req.getString("body");
+                    req = new JSONObject(queue.rpop("push"));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+                CloseableHttpResponse httpResponse = null;
+                try {
+                    CloseableHttpClient httpClient = HttpClients.createDefault();
+                    String url = null;
+                    String body = "";
+                    try {
+                        url = req.getString("url");
+                        body = req.getString("body");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
 
-                HttpPost request = new HttpPost(url);
-                request.setEntity(new StringEntity(body));
+                    HttpPost request = new HttpPost(url);
+                    request.setEntity(new StringEntity(body));
 
-                String t = this.getToken(new URL(new URL(url.toString()), "/").toString());
+                    String t = this.getToken(new URL(new URL(url.toString()), "/").toString());
 
-                request.addHeader("Authorization", "Bearer " + t);
-                httpResponse = httpClient.execute(request);
+                    request.addHeader("Authorization", "Bearer " + t);
+                    httpResponse = httpClient.execute(request);
 
-            } catch (Exception e) {
-                e.printStackTrace();
-                if (httpResponse.getStatusLine().getStatusCode() != 200) {
-                    queue.lpush("post", req.toString());
+                } catch (Exception e) {
+                    //e.printStackTrace();
+                   // if (httpResponse.getStatusLine().getStatusCode() != 200 || httpResponse == null) {
+                        queue.lpush("post", req.toString());
+                   // }
                 }
             }
-        }
-        while(queue.exists("delete")) {
-            JSONObject req = null;
-            try {
-                req = new JSONObject(queue.rpop("delete"));
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            CloseableHttpResponse httpResponse = null;
-            try {
-                CloseableHttpClient httpClient = HttpClients.createDefault();
-
-
-                String url = null;
+            while (queue.exists("delete")) {
+                System.out.println("delete req");
+                JSONObject req = null;
                 try {
-                    url = req.getString("url");
+                    req = new JSONObject(queue.rpop("delete"));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                HttpDelete request = new HttpDelete(url);
+                CloseableHttpResponse httpResponse = null;
+                try {
+                    CloseableHttpClient httpClient = HttpClients.createDefault();
 
-                String t = this.getToken(new URL(new URL(url.toString()), "/").toString());
 
-                request.addHeader("Authorization", "Bearer " + t);
-                httpResponse = httpClient.execute(request);
+                    String url = null;
+                    try {
+                        url = req.getString("url");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    HttpDelete request = new HttpDelete(url);
 
-            } catch (Exception e) {
-                e.printStackTrace();
-                if (httpResponse.getStatusLine().getStatusCode() != 200) {
-                    queue.lpush("delete", req.toString());
+                    String t = this.getToken(new URL(new URL(url.toString()), "/").toString());
+
+                    request.addHeader("Authorization", "Bearer " + t);
+                    httpResponse = httpClient.execute(request);
+
+                } catch (Exception e) {
+                   // e.printStackTrace();
+                   // if (httpResponse.getStatusLine().getStatusCode() != 200 || httpResponse == null) {
+                        queue.lpush("delete", req.toString());
+                    //}
                 }
             }
-        }
 
-        try {
-            System.out.println("no more works. Wait.");
-            Thread.sleep(3 * 1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+            try {
+                System.out.println("no more works. Wait.");
+                Thread.sleep(3 * 1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
-
-        this.thread.stop();
     }
 
     private String getToken(String url) {

@@ -17,6 +17,7 @@ import org.json.JSONObject;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import redis.clients.jedis.Jedis;
 
 import java.util.Base64;
 
@@ -32,6 +33,15 @@ public class GatewayServiceImplementation implements GatewayService {
     private String users_token = "";
     private String groups_token = "";
 
+    private Jedis jedis = new Jedis("127.0.0.1", 6379);
+    private RedisQueue redisQueue = new RedisQueue(jedis);
+    private QueueWorker queueWorker = new QueueWorker(jedis);
+
+    public GatewayServiceImplementation() {
+        queueWorker.start();
+        System.out.println("queue started");
+    }
+
     @Override
     public HttpResponse oauthExecute(HttpUriRequest request, StringBuilder token, String serviceUrl) throws Exception, JSONException {
         CloseableHttpClient httpClient = HttpClientBuilder.create().build();
@@ -45,7 +55,7 @@ public class GatewayServiceImplementation implements GatewayService {
             try {
                 response = httpClient.execute(request);
             } catch (Exception e) {
-                System.out.println("Service " + serviceUrl + "unavailable");
+                System.out.println("Service " + serviceUrl + " unavailable");
                 response.setStatusCode(502);
                 JSONObject errorObject = new JSONObject();
                 errorObject.put("error", serviceUrl + " unavailable");
@@ -199,7 +209,7 @@ public class GatewayServiceImplementation implements GatewayService {
 
         sb.delete(0, sb.length());
         sb.append(groups_token);
-        response = oauthExecute(putRequest, sb, groupsServiceUrl);
+        response = oauthExecute(request, sb, groupsServiceUrl);
         groups_token = sb.toString();
 
 
@@ -404,13 +414,13 @@ public class GatewayServiceImplementation implements GatewayService {
 
         sb.delete(0, sb.length());
         sb.append(groups_token);
-        HttpResponse response2 = oauthExecute(getRequest, sb, groupsServiceUrl);
+        HttpResponse response2 = oauthExecute(request, sb, groupsServiceUrl);
         groups_token = sb.toString();
 
 
         // Если один из сервисов недоступен
         if (response.getStatusLine().getStatusCode() == 502 || response2.getStatusLine().getStatusCode() == 502) {
-            HttpResponse backupResponce;
+            HttpResponse backupResponse;
 
             HttpPut backupUserRequest = new HttpPut(usersServiceUrl + "/users/edit");
             putRequest.addHeader("content-type", "application/json");
@@ -418,7 +428,7 @@ public class GatewayServiceImplementation implements GatewayService {
 
             sb.delete(0, sb.length());
             sb.append(users_token);
-            backupResponce = oauthExecute(backupUserRequest, sb, usersServiceUrl);
+            backupResponse = oauthExecute(backupUserRequest, sb, usersServiceUrl);
             users_token = sb.toString();
 
 
@@ -428,14 +438,14 @@ public class GatewayServiceImplementation implements GatewayService {
 
             sb.delete(0, sb.length());
             sb.append(groups_token);
-            backupResponce = oauthExecute(backupGroupRequest, sb, groupsServiceUrl);
+            backupResponse = oauthExecute(backupGroupRequest, sb, groupsServiceUrl);
             groups_token = sb.toString();
-            backupResponce.setStatusCode(500);
+            backupResponse.setStatusCode(500);
             JSONObject backup = new JSONObject();
-            backup.put("error", "Some service was unavailable. Rollback was successfull.");
-            backupResponce.setEntity(new StringEntity(backup.toString()));
+            backup.put("error", "Some service was unavailable. Rollback was triggered.");
+            backupResponse.setEntity(new StringEntity(backup.toString()));
 
-            return backupResponce;
+            return backupResponse;
         }
 
         HttpResponseFactory factory = new DefaultHttpResponseFactory();
@@ -455,9 +465,9 @@ public class GatewayServiceImplementation implements GatewayService {
         CloseableHttpClient httpClient = HttpClientBuilder.create().build();
         HttpGet getRequest = new HttpGet(usersServiceUrl + "/users/id/" + userId);
 
-        StringBuilder sb = new StringBuilder(groups_token);
-        HttpResponse response = oauthExecute(getRequest, sb, groupsServiceUrl);
-        groups_token = sb.toString();
+        StringBuilder sb = new StringBuilder(users_token);
+        HttpResponse response = oauthExecute(getRequest, sb, usersServiceUrl);
+        users_token = sb.toString();
 
         String user = EntityUtils.toString(response.getEntity());
         JSONObject juser = new JSONObject(user);
@@ -466,21 +476,34 @@ public class GatewayServiceImplementation implements GatewayService {
         HttpDelete request = new HttpDelete(groupsServiceUrl + "/groups/players/remove?groupId=" + groupId +
                 "&userId=" + userId);
 
-        sb.delete(0, sb.length());
+        redisQueue.addReqToQueue(request);
+
+        /*sb.delete(0, sb.length());
         sb.append(groups_token);
         response = oauthExecute(request, sb, groupsServiceUrl);
-        groups_token = sb.toString();
+        groups_token = sb.toString();*/
 
         HttpPut putRequest = new HttpPut(usersServiceUrl + "/users/edit");
         StringEntity putParameters = new StringEntity(juser.toString());
         putRequest.addHeader("content-type", "application/json");
         putRequest.setEntity(putParameters);
+
+        /*
         sb.delete(0, sb.length());
         sb.append(users_token);
         response = oauthExecute(putRequest, sb, groupsServiceUrl);
         users_token = sb.toString();
+        */
 
-        return response;
+        redisQueue.addReqToQueue(putRequest);
+
+        HttpResponseFactory factory = new DefaultHttpResponseFactory();
+        HttpResponse res = factory.newHttpResponse(new BasicStatusLine(HttpVersion.HTTP_1_1, HttpStatus.SC_OK, null), null);
+        JSONObject jo = new JSONObject();
+        jo.put("info", "Request was queued");
+
+        res.setEntity(new StringEntity(jo.toString()));
+        return res;
     }
 
     @Override
