@@ -15,12 +15,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.http.HttpHeaders;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-import java.io.StringReader;
 import java.util.Base64;
 
 
@@ -36,7 +33,7 @@ public class GatewayServiceImplementation implements GatewayService {
     private String groups_token = "";
 
     @Override
-    public HttpResponse oauthExecute(HttpUriRequest request, StringBuilder token, String serviceUrl) throws IOException {
+    public HttpResponse oauthExecute(HttpUriRequest request, StringBuilder token, String serviceUrl) throws Exception, JSONException {
         CloseableHttpClient httpClient = HttpClientBuilder.create().build();
 
         HttpResponseFactory factory = new DefaultHttpResponseFactory();
@@ -47,8 +44,12 @@ public class GatewayServiceImplementation implements GatewayService {
             request.addHeader("Authorization", "Bearer " + token.toString());
             try {
                 response = httpClient.execute(request);
-            } catch (IOException e) {
+            } catch (Exception e) {
                 System.out.println("Service " + serviceUrl + "unavailable");
+                response.setStatusCode(502);
+                JSONObject errorObject = new JSONObject();
+                errorObject.put("error", serviceUrl + " unavailable");
+                response.setEntity(new StringEntity(errorObject.toString()));
             }
             if (response.getStatusLine().getStatusCode() == 401 || response.getStatusLine().getStatusCode() == 403) {
                 System.out.println("need new token for " + serviceUrl);
@@ -72,7 +73,7 @@ public class GatewayServiceImplementation implements GatewayService {
     }
 
     @Override
-    public String addUser(String user) throws IOException {
+    public HttpResponse addUser(String user) throws Exception {
         CloseableHttpClient httpClient = HttpClientBuilder.create().build();
         HttpPost request = new HttpPost(usersServiceUrl + "/users");
 
@@ -84,11 +85,11 @@ public class GatewayServiceImplementation implements GatewayService {
         HttpResponse response = oauthExecute(request, sb, usersServiceUrl);
         users_token = sb.toString();
 
-        return EntityUtils.toString(response.getEntity());
+        return response;
     }
 
     @Override
-    public String getUsers() throws IOException {
+    public HttpResponse getUsers() throws Exception {
         CloseableHttpClient httpClient = HttpClientBuilder.create().build();
         HttpGet request = new HttpGet(usersServiceUrl + "/users");
 
@@ -96,11 +97,11 @@ public class GatewayServiceImplementation implements GatewayService {
         HttpResponse response = oauthExecute(request, sb, usersServiceUrl);
         users_token = sb.toString();
 
-        return EntityUtils.toString(response.getEntity());
+        return response;
     }
 
     @Override
-    public String getUserById(Long id) throws IOException {
+    public HttpResponse getUserById(Long id) throws Exception {
         CloseableHttpClient httpClient = HttpClientBuilder.create().build();
         HttpGet request = new HttpGet(usersServiceUrl + "/users/id/" + id);
 
@@ -108,11 +109,11 @@ public class GatewayServiceImplementation implements GatewayService {
         HttpResponse response = oauthExecute(request, sb, usersServiceUrl);
         users_token = sb.toString();
 
-        return EntityUtils.toString(response.getEntity());
+        return response;
     }
 
     @Override
-    public String addGame(String game) throws IOException {
+    public HttpResponse addGame(String game) throws Exception {
         CloseableHttpClient httpClient = HttpClientBuilder.create().build();
         HttpPost request = new HttpPost(gamesServiceUrl + "/games");
         StringEntity parameters = new StringEntity(game);
@@ -123,11 +124,11 @@ public class GatewayServiceImplementation implements GatewayService {
         HttpResponse response = oauthExecute(request, sb, gamesServiceUrl);
         games_token = sb.toString();
 
-        return EntityUtils.toString(response.getEntity());
+        return response;
     }
 
     @Override
-    public String getGames(int page, int size) throws IOException {
+    public HttpResponse getGames(int page, int size) throws Exception {
         CloseableHttpClient httpClient = HttpClientBuilder.create().build();
         HttpGet request = new HttpGet(gamesServiceUrl + "/games?page=" + page + "&size=" + size);
 
@@ -135,11 +136,11 @@ public class GatewayServiceImplementation implements GatewayService {
         HttpResponse response = oauthExecute(request, sb, gamesServiceUrl);
         games_token = sb.toString();
 
-        return EntityUtils.toString(response.getEntity());
+        return response;
     }
 
     @Override
-    public String getGameById(Long id) throws IOException {
+    public HttpResponse getGameById(Long id) throws Exception {
         CloseableHttpClient httpClient = HttpClientBuilder.create().build();
         HttpGet request = new HttpGet(gamesServiceUrl + "/games/id/" + id);
 
@@ -147,11 +148,11 @@ public class GatewayServiceImplementation implements GatewayService {
         HttpResponse response = oauthExecute(request, sb, gamesServiceUrl);
         games_token = sb.toString();
 
-        return EntityUtils.toString(response.getEntity());
+        return response;
     }
 
     @Override
-    public String searchGames(String genre, int num) throws IOException {
+    public HttpResponse searchGames(String genre, int num) throws Exception {
         CloseableHttpClient httpClient = HttpClientBuilder.create().build();
         HttpGet request = new HttpGet(gamesServiceUrl + "/games/search?genre=" + genre + "&playernum=" + num);
 
@@ -159,12 +160,12 @@ public class GatewayServiceImplementation implements GatewayService {
         HttpResponse response = oauthExecute(request, sb, gamesServiceUrl);
         games_token = sb.toString();
 
-        return EntityUtils.toString(response.getEntity());
+        return response;
     }
 
 
     @Override
-    public String addGroup(String group) throws IOException, JSONException {
+    public HttpResponse addGroup(String group) throws Exception, JSONException {
         JSONObject jo = new JSONObject(group);
         CloseableHttpClient httpClient = HttpClientBuilder.create().build();
 
@@ -202,11 +203,11 @@ public class GatewayServiceImplementation implements GatewayService {
         groups_token = sb.toString();
 
 
-        return EntityUtils.toString(response.getEntity());
+        return response;
     }
 
     @Override
-    public String getFreeGroups() throws IOException {
+    public HttpResponse getFreeGroups() throws Exception {
         CloseableHttpClient httpClient = HttpClientBuilder.create().build();
         HttpGet request = new HttpGet(groupsServiceUrl + "/groups/free");
 
@@ -214,11 +215,11 @@ public class GatewayServiceImplementation implements GatewayService {
         HttpResponse response = oauthExecute(request, sb, groupsServiceUrl);
         groups_token = sb.toString();
 
-        return EntityUtils.toString(response.getEntity());
+        return response;
     }
 
     @Override
-    public String getGroupsByGame(Long gameId) throws IOException {
+    public HttpResponse getGroupsByGame(Long gameId) throws Exception {
         CloseableHttpClient httpClient = HttpClientBuilder.create().build();
         HttpGet request = new HttpGet(groupsServiceUrl + "/groups/game?gameId=" + gameId);
 
@@ -226,11 +227,11 @@ public class GatewayServiceImplementation implements GatewayService {
         HttpResponse response = oauthExecute(request, sb, groupsServiceUrl);
         groups_token = sb.toString();
 
-        return EntityUtils.toString(response.getEntity());
+        return response;
     }
 
     @Override
-    public String getGroups() throws IOException {
+    public HttpResponse getGroups() throws Exception {
         CloseableHttpClient httpClient = HttpClientBuilder.create().build();
         HttpGet request = new HttpGet(groupsServiceUrl + "/groups");
 
@@ -238,11 +239,12 @@ public class GatewayServiceImplementation implements GatewayService {
         HttpResponse response = oauthExecute(request, sb, groupsServiceUrl);
         groups_token = sb.toString();
 
-        return EntityUtils.toString(response.getEntity());
+        return response;
     }
 
+    // Деградация
     @Override
-    public String getGroupById(Long id) throws IOException, JSONException {
+    public ResponseEntity getGroupById(Long id) throws Exception, JSONException {
         CloseableHttpClient httpClient = HttpClientBuilder.create().build();
         HttpGet request = new HttpGet(groupsServiceUrl + "/groups/id/" + id);
 
@@ -283,11 +285,13 @@ public class GatewayServiceImplementation implements GatewayService {
 
         result.put("players", usersList);
         result.put("group", group);
-        return result.toString();
+
+        return ResponseEntity.status(org.springframework.http.HttpStatus.OK).body(result.toString());
     }
 
+
     @Override
-    public boolean deleteGroup(Long id) throws IOException, JSONException {
+    public HttpResponse deleteGroup(Long id) throws Exception, JSONException {
         CloseableHttpClient httpClient = HttpClientBuilder.create().build();
         HttpGet request = new HttpGet(groupsServiceUrl + "/groups/id/" + id);
 
@@ -353,11 +357,11 @@ public class GatewayServiceImplementation implements GatewayService {
         sb.append(groups_token);
         response = oauthExecute(delRequest, sb, groupsServiceUrl);
         groups_token = sb.toString();
-        return true;
+        return response;
     }
 
     @Override
-    public String addPlayer(Long userId, Long groupId) throws IOException, JSONException {
+    public HttpResponse addPlayer(Long userId, Long groupId) throws Exception, JSONException {
         CloseableHttpClient httpClient = HttpClientBuilder.create().build();
         HttpGet getRequest = new HttpGet(groupsServiceUrl + "/groups/id/" + groupId);
 
@@ -368,7 +372,7 @@ public class GatewayServiceImplementation implements GatewayService {
         String group = EntityUtils.toString(response.getEntity());
         JSONObject jgroup = new JSONObject(group);
         if (Integer.valueOf(jgroup.getString("freeSpace")) == 0)
-            return "";
+            return response;
 
         getRequest = new HttpGet(usersServiceUrl + "/users/id/" + userId);
 
@@ -398,12 +402,12 @@ public class GatewayServiceImplementation implements GatewayService {
         response = oauthExecute(getRequest, sb, groupsServiceUrl);
         groups_token = sb.toString();
 
-        return EntityUtils.toString(response.getEntity());
+        return response;
 
     }
 
     @Override
-    public boolean removePlayer(Long userId, Long groupId) throws IOException, JSONException {
+    public HttpResponse removePlayer(Long userId, Long groupId) throws Exception, JSONException {
         CloseableHttpClient httpClient = HttpClientBuilder.create().build();
         HttpGet getRequest = new HttpGet(usersServiceUrl + "/users/id/" + userId);
 
@@ -432,11 +436,11 @@ public class GatewayServiceImplementation implements GatewayService {
         response = oauthExecute(putRequest, sb, groupsServiceUrl);
         users_token = sb.toString();
 
-        return true;
+        return response;
     }
 
     @Override
-    public HttpResponse requestToken(String username, String password, String url, String clientCred) throws IOException {
+    public HttpResponse requestToken(String username, String password, String url, String clientCred) throws Exception {
         CloseableHttpClient httpClient = HttpClientBuilder.create().build();
         url = url + "/oauth/token?grant_type=password&username=" + username + "&password=" + password;
 
@@ -447,7 +451,7 @@ public class GatewayServiceImplementation implements GatewayService {
     }
 
     @Override
-    public ResponseEntity<String> getCode(String client_id, String redirect_uri, String url) throws IOException {
+    public ResponseEntity<String> getCode(String client_id, String redirect_uri, String url) throws Exception {
         url = url + "/oauth/authorize?response_type=code&client_id=" + client_id + "&redirect_uri=" + redirect_uri;
 
         HttpHeaders headers = new HttpHeaders();
@@ -456,7 +460,7 @@ public class GatewayServiceImplementation implements GatewayService {
     }
 
     @Override
-    public HttpResponse codeToToken(String redirect_uri, String code, String url, String client_cred) throws IOException {
+    public HttpResponse codeToToken(String redirect_uri, String code, String url, String client_cred) throws Exception {
         CloseableHttpClient httpClient = HttpClientBuilder.create().build();
         url = url + "/oauth/token?grant_type=authorization_code&redirect_uri=" + redirect_uri + "&code=" + code;
 

@@ -5,38 +5,37 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.json.JSONException;
 import org.springframework.http.ResponseEntity;
 
-import java.io.IOException;
 
 public interface GatewayService  {
     //user service
-    String addUser(String user) throws IOException;
-    String getUsers() throws IOException;
-    String getUserById(Long id) throws IOException;
+    HttpResponse addUser(String user) throws Exception;
+    HttpResponse getUsers() throws Exception;
+    HttpResponse getUserById(Long id) throws Exception;
 
     //game service
-    String addGame(String game) throws IOException;
-    String getGames(int page, int size) throws IOException;
-    String getGameById(Long id) throws IOException;
-    String searchGames(String genre, int num) throws IOException;
+    HttpResponse addGame(String game) throws Exception;
+    HttpResponse getGames(int page, int size) throws Exception;
+    HttpResponse getGameById(Long id) throws Exception;
+    HttpResponse searchGames(String genre, int num) throws Exception;
 
     //group + game service
-    String addGroup(String group) throws IOException, JSONException;
-    String getFreeGroups() throws IOException;
-    String getGroupsByGame(Long gameId) throws IOException;
-    String getGroups() throws IOException;
+    HttpResponse addGroup(String group) throws Exception;
+    HttpResponse getFreeGroups() throws Exception;
+    HttpResponse getGroupsByGame(Long gameId) throws Exception;
+    HttpResponse getGroups() throws Exception;
 
     //group + user service
-    String getGroupById(Long id) throws IOException, JSONException;
-    boolean deleteGroup(Long id) throws IOException, JSONException;
+    ResponseEntity getGroupById(Long id) throws Exception;
+    HttpResponse deleteGroup(Long id) throws Exception;
 
     //group + game + user service
-    String addPlayer(Long userId, Long groupId) throws IOException, JSONException;
-    boolean removePlayer(Long userId, Long groupId) throws IOException, JSONException;
+    HttpResponse addPlayer(Long userId, Long groupId) throws Exception;
+    HttpResponse removePlayer(Long userId, Long groupId) throws Exception;
 
-    HttpResponse requestToken(String username, String password, String url, String clientCred) throws IOException;
-    ResponseEntity<String> getCode(String client_id, String redirect_uri, String url) throws IOException;
-    HttpResponse codeToToken(String redirect_uri, String code, String url, String client_cred) throws IOException;
+    HttpResponse requestToken(String username, String password, String url, String clientCred) throws Exception;
+    ResponseEntity<String> getCode(String client_id, String redirect_uri, String url) throws Exception;
+    HttpResponse codeToToken(String redirect_uri, String code, String url, String client_cred) throws Exception;
 
-    boolean checkToken(String token, String url) throws IOException;
-    HttpResponse oauthExecute(HttpUriRequest request, StringBuilder token, String serviceUrl) throws IOException;
+    boolean checkToken(String token, String url) throws Exception;
+    HttpResponse oauthExecute(HttpUriRequest request, StringBuilder token, String serviceUrl) throws Exception;
 }
